@@ -23,7 +23,7 @@ deque<Fraction> space3;    //Store suffix expressions
 stack<Fraction>space4;  //An auxiliary container that evaluates the suffix expression 
 
 deque<Fraction> line; //Store the formula
-				  
+
 bool isBracket(char c)//Determine whether it is brackets
 {
 	if (c == '(' || c == ')')
@@ -32,7 +32,7 @@ bool isBracket(char c)//Determine whether it is brackets
 		return false;
 }
 
-  
+
 int getPri(char c)//Get the priority of the symbol
 {
 	switch (c)
@@ -65,7 +65,7 @@ void check(Fraction c)//Determine the priority of the symbol
 		if (c.symbol == '(')
 			space2.push(c);
 		else
-		{ 
+		{
 			while (space2.top().symbol != '(') //Pop all elements until the left parenthesis is encountered
 			{
 				Fraction ch = space2.top();
@@ -76,7 +76,7 @@ void check(Fraction c)//Determine the priority of the symbol
 			space2.pop();
 		}
 	}
-	else    
+	else
 	{
 		Fraction sym = space2.top();
 
@@ -85,7 +85,7 @@ void check(Fraction c)//Determine the priority of the symbol
 			//If c's priority is smaller than or equal to the top of the stack, the stack top element is popped  
 			space2.pop();
 			//push it into space3 (suffix expression)  
-			space3.push_back(sym); 
+			space3.push_back(sym);
 			check(c);
 		}
 		else
@@ -109,7 +109,7 @@ void allocate()
 			space3.push_back(c);
 		}
 		else
-		{  
+		{
 			check(c);
 		}
 
@@ -147,16 +147,16 @@ void calculate()
 			switch (c.symbol)
 			{
 			case '+':
-				space4.push(fc.FractionAdd(op2,op1));
+				space4.push(fc.FractionAdd(op2, op1));
 				break;
 			case '-':
-				space4.push(fc.Fractionsub(op2,op1));
+				space4.push(fc.Fractionsub(op2, op1));
 				break;
 			case '*':
-				space4.push(fc.Fractionmul(op2,op1));
+				space4.push(fc.Fractionmul(op2, op1));
 				break;
 			case '/':
-				space4.push(fc.Fractiondiv(op2,op1));  
+				space4.push(fc.Fractiondiv(op2, op1));
 				break;
 			}
 		}
@@ -165,7 +165,7 @@ void calculate()
 
 void Generateoperators() //Generate the operation symbol
 {
-	int num = rand()%4+1;
+	int num = rand() % 4 + 1;
 	Fraction fc;
 	switch (num)
 	{
@@ -206,8 +206,8 @@ void GenerateFraction() //Generate Fraction
 {
 	Fraction a;
 	FractionCalculate fc;
-	a.numer = rand()%10 +1;
-	a.deno = rand() % 10+1;
+	a.numer = rand() % 10 + 1;
+	a.deno = rand() % 10 + 1;
 	while (a.numer >= a.deno) //To ensure that numerator are less than denominator
 	{
 		a.numer = rand() % 10 + 1;
@@ -232,7 +232,7 @@ void Generateinteger() //Generate the integer
 
 void random() //Automatically generate integers and fractions
 {
-	int t = rand()%2;
+	int t = rand() % 2;
 	if (t == 0)
 	{
 		GenerateFraction();
@@ -306,10 +306,11 @@ void Answer(int k)//Output the expression and judge the correctness
 			stringstream ss;
 			ss << result.numer;
 			ss >> re;
+			tmp = re;
 		}
 		else
 		{
-			string a, b; 
+			string a, b;
 			stringstream ss;
 			ss << result.numer;
 			ss >> a;
@@ -322,7 +323,7 @@ void Answer(int k)//Output the expression and judge the correctness
 			re.append(b);
 			tmp = re;
 		}
-		if (tmp.compare(n)==0)//The result of the string type is compared with the value entered
+		if (tmp.compare(n) == 0)//The result of the string type is compared with the value entered
 		{
 			cout << "正确!" << endl;
 			num++;
@@ -340,7 +341,7 @@ void Answer(int k)//Output the expression and judge the correctness
 			}
 		}
 	}
-	
+
 	space1.clear(); //Initialization
 	line.clear();
 	while (!space2.empty())
@@ -360,8 +361,8 @@ void Generate(int n)
 	{
 		int k = i;
 		srand((unsigned)time(0));
-		int operatorsnum = rand()%12+3;//Generate the number of operands 
-		int bracketsid = rand()%2;
+		int operatorsnum = rand() % 12 + 3;//Generate the number of operands 
+		int bracketsid = rand() % 2;
 		int bracketnum = 0; //The pair of brackets
 		if (bracketsid == 0)//Generate left bracks
 		{
@@ -380,8 +381,8 @@ void Generate(int n)
 		{
 			Generateoperators();
 
-			bracketsid = rand()%2;
-			if (bracketsid == 0 && j<operatorsnum-1)
+			bracketsid = rand() % 2;
+			if (bracketsid == 0 && j<operatorsnum - 1)
 			{
 				Fraction fc;
 				fc.deno = 1;
@@ -429,8 +430,8 @@ void Generate(int n)
 int main(int argc, char *argv[])
 {
 	char *m = argv[argc - 1];
-	int n= *m - '0';
-	int cnt=0;
+	int n = *m - '0';
+	int cnt = 0;
 	space1.clear(); //Initialization
 	line.clear();
 	while (!space2.empty())
@@ -460,6 +461,6 @@ int main(int argc, char *argv[])
 		cout << "本次得分 :" << fixed << setprecision(2) << score << "分" << endl;
 	}
 	system("pause");
-    return 0;
+	return 0;
 }
 
