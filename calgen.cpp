@@ -5,6 +5,7 @@
 #include"math.h"
 #include<iostream>
 #include<stdlib.h>
+#include <stdio.h>  
 #include<time.h>
 #include <iomanip>
 #include<sstream>
@@ -43,6 +44,8 @@ int getPri(char c)//Get the priority of the symbol
 	case '(':
 	case ')':
 		return -1;  //Set brackets to the lowest priority 
+		break;
+	default:
 		break;
 	}
 }
@@ -419,8 +422,18 @@ void Generate(int n)
 
 int main(int argc, char *argv[])
 {
-	char *m = argv[argc - 1];
-	int n = *m - '0';
+	int n=1;
+	for (int i = 0;i < argc;i++)
+	{
+		string str = argv[i];
+		if (str == "-n")
+		{
+			i++;
+			char *m = argv[i];
+			n = *m - '0';
+		}
+	}
+	
 	int cnt = 0;
 	space.clear(); //Initialization
 	line.clear();
