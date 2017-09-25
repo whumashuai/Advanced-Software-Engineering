@@ -50,6 +50,18 @@ int getPri(char c)//Get the priority of the symbol
 	}
 }
 
+int checkzero(Fraction op1) //Check whether the divisor is zero
+{
+	if (op1.numer == 0)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 void check(Fraction c, stack<Fraction>& space2, deque<Fraction>& space3)//Determine the priority of the symbol
 {
 	if (space2.empty())
@@ -146,20 +158,36 @@ Fraction calculate(deque<Fraction> space1)
 			Fraction op2 = space4.top();
 			space4.pop();
 			FractionCalculate fc;
-			switch (c.symbol)
+			if (c.symbol == '+')
 			{
-			case '+':
 				space4.push(fc.FractionAdd(op2, op1));
-				break;
-			case '-':
+			}
+			else if (c.symbol == '-')
+			{
 				space4.push(fc.Fractionsub(op2, op1));
-				break;
-			case '*':
+			}
+			else if (c.symbol == '*')
+			{
 				space4.push(fc.Fractionmul(op2, op1));
-				break;
-			case '/':
-				space4.push(fc.Fractiondiv(op2, op1));
-				break;
+			}
+			else
+			{
+				if (c.symbol == '/')
+				{
+					int t=checkzero(op1);
+					if (t == 0)
+					{
+						space4.push(fc.Fractiondiv(op2, op1));
+					}
+					else
+					{
+						Fraction fg;
+						fg.deno = 0;
+						fg.numer = 1;
+						fg.symbol = '|';
+						return fg;
+					}
+				}
 			}
 		}
 	}
@@ -253,7 +281,7 @@ void Answer(int k)//Output the expression and judge the correctness
 
 	Fraction result;
 	result = calculate(space);
-	if (result.numer < 0 || result.deno < 0 || result.numer > 100 || result.deno > 100)//Control the final result is not negative, the numerator and denominator of the score are less than 100
+	if (result.numer < 0 || result.deno <= 0 || result.numer > 100 || result.deno > 100)//Control the final result is not negative, the numerator and denominator of the score are less than 100
 	{
 		temp = 1;
 	}
@@ -327,7 +355,7 @@ void Answer(int k)//Output the expression and judge the correctness
 		}
 		if (tmp.compare(n) == 0)//The result of the string type is compared with the value entered
 		{
-			cout << "正确!" << endl;
+			cout << "正确!" << endl << endl;
 			num++;
 		}
 		else
@@ -339,7 +367,7 @@ void Answer(int k)//Output the expression and judge the correctness
 			}
 			else
 			{
-				cout << result.numer << "/" << result.deno << endl;
+				cout << result.numer << "/" << result.deno << endl << endl;
 			}
 		}
 	}
