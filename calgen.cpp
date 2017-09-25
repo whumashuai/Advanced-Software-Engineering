@@ -15,13 +15,8 @@ using namespace std;
 
 int num;//Count the number of correct questions
 int temp;
-Fraction result;//store the final operation results
 
-deque<Fraction> space1;  //Store infix expression  
-stack<Fraction> space2;  //Store the operator 
-deque<Fraction> space3;    //Store suffix expressions  
-stack<Fraction>space4;  //An auxiliary container that evaluates the suffix expression 
-
+deque<Fraction> space;
 deque<Fraction> line; //Store the formula
 
 bool isBracket(char c)//Determine whether it is brackets
@@ -52,7 +47,7 @@ int getPri(char c)//Get the priority of the symbol
 	}
 }
 
-void check(Fraction c)//Determine the priority of the symbol
+void check(Fraction c, stack<Fraction>& space2, deque<Fraction>& space3)//Determine the priority of the symbol
 {
 	if (space2.empty())
 	{
@@ -86,7 +81,7 @@ void check(Fraction c)//Determine the priority of the symbol
 			space2.pop();
 			//push it into space3 (suffix expression)  
 			space3.push_back(sym);
-			check(c);
+			check(c, space2, space3);
 		}
 		else
 		{
@@ -97,7 +92,7 @@ void check(Fraction c)//Determine the priority of the symbol
 }
 
 //Remove the element from space1 and assign the element to space2 and space3  
-void allocate()
+void allocate(deque<Fraction>& space1, stack<Fraction>& space2, deque<Fraction>& space3)
 {
 	while (!space1.empty())
 	{
@@ -110,7 +105,7 @@ void allocate()
 		}
 		else
 		{
-			check(c);
+			check(c, space2, space3);
 		}
 
 	}
@@ -125,8 +120,12 @@ void allocate()
 }
 
 //Calculate the suffix expression 
-void calculate()
+Fraction calculate(deque<Fraction> space1)
 {
+	stack<Fraction> space2;
+	deque<Fraction> space3;
+	stack<Fraction> space4;
+	allocate(space1, space2, space3);
 	while (!space3.empty())
 	{
 		Fraction c = space3.front();
@@ -161,6 +160,7 @@ void calculate()
 			}
 		}
 	}
+	return space4.top();
 }
 
 void Generateoperators() //Generate the operation symbol
@@ -173,28 +173,28 @@ void Generateoperators() //Generate the operation symbol
 		fc.deno = 1;
 		fc.numer = 0;
 		fc.symbol = '+';
-		space1.push_back(fc);
+		space.push_back(fc);
 		line.push_back(fc);
 		break;
 	case 2: //Subtraction
 		fc.deno = 1;
 		fc.numer = 0;
 		fc.symbol = '-';
-		space1.push_back(fc);
+		space.push_back(fc);
 		line.push_back(fc);
 		break;
 	case 3: //Multiplication
 		fc.deno = 1;
 		fc.numer = 0;
 		fc.symbol = '*';
-		space1.push_back(fc);
+		space.push_back(fc);
 		line.push_back(fc);
 		break;
 	case 4: //Division
 		fc.deno = 1;
 		fc.numer = 0;
 		fc.symbol = '/';
-		space1.push_back(fc);
+		space.push_back(fc);
 		line.push_back(fc);
 		break;
 	default:
@@ -215,7 +215,7 @@ void GenerateFraction() //Generate Fraction
 	}
 	a.symbol = '|'; //"/" means division,"|" means fraction
 	a = fc.Fractionsim(a);
-	space1.push_back(a);
+	space.push_back(a);
 	line.push_back(a);
 }
 
@@ -226,7 +226,7 @@ void Generateinteger() //Generate the integer
 	fc.numer = a;
 	fc.deno = 1;
 	fc.symbol = '|';
-	space1.push_back(fc);
+	space.push_back(fc);
 	line.push_back(fc);
 }
 
@@ -248,9 +248,8 @@ void Answer(int k)//Output the expression and judge the correctness
 	string n;
 	string re;
 
-	allocate();
-	calculate();
-	result = space4.top();
+	Fraction result;
+	result = calculate(space);
 	if (result.numer < 0 || result.deno < 0 || result.numer > 100 || result.deno > 100)//Control the final result is not negative, the numerator and denominator of the score are less than 100
 	{
 		temp = 1;
@@ -342,17 +341,8 @@ void Answer(int k)//Output the expression and judge the correctness
 		}
 	}
 
-	space1.clear(); //Initialization
+	space.clear(); //Initialization
 	line.clear();
-	while (!space2.empty())
-	{
-		space2.pop();
-	}
-	space3.clear();
-	while (!space4.empty())
-	{
-		space4.pop();
-	}
 }
 
 void Generate(int n)
@@ -370,7 +360,7 @@ void Generate(int n)
 			fc.deno = 1;
 			fc.numer = 0;
 			fc.symbol = '(';
-			space1.push_back(fc);
+			space.push_back(fc);
 			line.push_back(fc);
 			bracketnum++;
 		}
@@ -388,7 +378,7 @@ void Generate(int n)
 				fc.deno = 1;
 				fc.numer = 0;
 				fc.symbol = '(';
-				space1.push_back(fc);
+				space.push_back(fc);
 				line.push_back(fc);
 				bracketnum++;
 				random();
@@ -402,7 +392,7 @@ void Generate(int n)
 					fc.deno = 1;
 					fc.numer = 0;
 					fc.symbol = ')';
-					space1.push_back(fc);
+					space.push_back(fc);
 					line.push_back(fc);
 					bracketnum--;
 				}
@@ -414,7 +404,7 @@ void Generate(int n)
 			fc.deno = 1;
 			fc.numer = 0;
 			fc.symbol = ')';
-			space1.push_back(fc);
+			space.push_back(fc);
 			line.push_back(fc);
 			bracketnum--;
 		}
@@ -432,21 +422,10 @@ int main(int argc, char *argv[])
 	char *m = argv[argc - 1];
 	int n = *m - '0';
 	int cnt = 0;
-	space1.clear(); //Initialization
+	space.clear(); //Initialization
 	line.clear();
-	while (!space2.empty())
-	{
-		space2.pop();
-	}
-	space3.clear();
-	while (!space4.empty())
-	{
-		space4.pop();
-	}
 	num = 0;
-	result.deno = 0;
-	result.numer = 0;
-	result.symbol = '|';
+
 	cout << "本次共" << n << "题，满分100分" << endl;
 	cnt = 100 / n;
 	Generate(n);//Generate the problem
